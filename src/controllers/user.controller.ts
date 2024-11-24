@@ -1,10 +1,11 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import ApiError from "../utils/apiError.js";
+import {ApiError} from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {ApiResponse} from "../utils/apiResponse.js"
+import { Request, Response } from "express";
 
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { fullName, email, username, password } = req.body;
 
   if (
@@ -13,7 +14,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 

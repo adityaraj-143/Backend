@@ -1,8 +1,22 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { IVideo } from "./video.model.js";
 
-const userSchema = new Schema(
+export interface IUser extends Document {
+  username: string;
+  email: string;
+  fullName: string;
+  avatar: string; // cloudinary URL
+  coverImage?: string; // cloudinary URL (optional)
+  watchHistory: string[]; // Array of video IDs (ObjectIds as strings)
+  password: string;
+  refreshToken?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const userSchema = new Schema<IUser>(
   {
     username: {
       type: String,
@@ -73,7 +87,7 @@ userSchema.methods.generateAccessToken = function () {
 )
 };
 
-userSchema.methods.generateAccessToken = function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign({
     _id: this._id,
   },
@@ -84,4 +98,4 @@ userSchema.methods.generateAccessToken = function () {
 )
 };
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);

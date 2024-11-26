@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
+import { CustomRequest } from "../controllers/user.controller.js";
 
 const asyncHandler =
   (
     requestHandler: (
-      req: Request,
+      req: Request ,
       res: Response,
       next: NextFunction
     ) => any
   ) =>
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request , res: Response, next: NextFunction) => {
     try {
-      await requestHandler(req, res, next);
+      await requestHandler(req , res, next);
     } catch (error: any) {
-      res.status(error.code || 500).json({
+      res.status(500).json({
         success: false,
         message: error.message,
       });

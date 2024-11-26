@@ -1,7 +1,21 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
+import { IUser } from "./user.model.js";
 
-const videoSchema = new Schema(
+export interface IVideo extends Document {
+  videofile: string; // Cloudinary URL for the video
+  thumbnail: string; // Cloudinary URL for the thumbnail
+  title: string; 
+  description: string; 
+  duration: number; 
+  views: number; 
+  isPublished: boolean; 
+  owner: IUser["_id"]; // User ObjectId (reference to User model)
+  createdAt?: Date; 
+  updatedAt?: Date; 
+}
+
+const videoSchema = new Schema<IVideo>(
   {
     videofile: {
       type: String, //cloudinary
@@ -24,7 +38,7 @@ const videoSchema = new Schema(
       required: true,
     },
     views: {
-        type: String,
+        type: Number,
         default: 0,
     },
     isPublished: {
@@ -43,4 +57,4 @@ const videoSchema = new Schema(
 
 videoSchema.plugin(mongooseAggregatePaginate)
 
-export const Video = mongoose.model("Video", videoSchema);
+export const Video = mongoose.model<IVideo>("Video", videoSchema);

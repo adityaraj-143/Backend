@@ -4,9 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config ./src/index.js",
-    "build": "tsc",
-    "tsc": "tsc"
+    "start": "npx tsc && nodemon -r dotenv/config build/index.js",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,7 @@
     "@types/node": "^22.9.3",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {

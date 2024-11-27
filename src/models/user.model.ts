@@ -1,7 +1,7 @@
 import mongoose, { Document, InferSchemaType, Schema, Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { IUser } from "../constants.js";
+import { IUser } from "../types/types.js";
 
 export const userSchema = new Schema(
   {

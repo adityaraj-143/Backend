@@ -5,7 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { customjwtreq, CustomRequest, jwtTokendcd } from "../constants.js";
+import { customjwtreq, CustomRequest, jwtTokendcd } from "../types/types.js";
 import jwt from "jsonwebtoken"
 
 const options = {

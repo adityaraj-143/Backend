@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomRequest } from "../controllers/user.controller.js";
 
 const asyncHandler =
   (

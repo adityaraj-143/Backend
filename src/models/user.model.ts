@@ -1,22 +1,9 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, InferSchemaType, Schema, Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { IVideo } from "./video.model.js";
+import { IUser } from "../constants.js";
 
-export interface IUser extends Document {
-  username: string;
-  email: string;
-  fullName: string;
-  avatar: string; // cloudinary URL
-  coverImage?: string; // cloudinary URL (optional)
-  watchHistory: string[]; // Array of video IDs (ObjectIds as strings)
-  password: string;
-  refreshToken?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-const userSchema = new Schema<IUser>(
+export const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -75,10 +62,7 @@ userSchema.methods.isPasswordCorrect = async function (password: string) {
 
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign({
-    _id: this._id,
-    email: this.email,
-    username: this.username,
-    fullName: this.fullName
+    _id: this._id
   },
   process.env.ACCESS_TOKEN_SECRET!,
   {

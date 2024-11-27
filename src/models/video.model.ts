@@ -1,6 +1,6 @@
 import mongoose, { Document, InferSchemaType, Schema, Types } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
-import { IVideo } from "../constants.js";
+import { IVideo } from "../types/types.js";
 
 export const videoSchema = new Schema(
   {

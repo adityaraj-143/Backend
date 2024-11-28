@@ -1,14 +1,15 @@
+import { CustomRequest } from "@/types/types.js";
 import { NextFunction, Request, Response } from "express";
 
 const asyncHandler =
   (
     requestHandler: (
-      req: Request,
+      req: CustomRequest,
       res: Response,
       next: NextFunction
     ) => any
   ) =>
-  async (req: Request , res: Response, next: NextFunction) => {
+  async (req: CustomRequest , res: Response, next: NextFunction) => {
     try {
       await requestHandler(req , res, next);
     } catch (error: any) {

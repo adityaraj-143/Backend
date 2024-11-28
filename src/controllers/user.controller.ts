@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose, {Types } from "mongoose";
 import { CustomRequest, jwtTokendcd } from "../types/types.js";
 import jwt from "jsonwebtoken";
@@ -34,8 +34,7 @@ const generateTokens = async (userId: Types.ObjectId) => {
   }
 };
 
-const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  const customReq = req as CustomRequest;
+const registerUser = asyncHandler(async (req: CustomRequest, res: Response) => {
   const { fullName, email, username, password } = req.body;
 
   if (
@@ -53,17 +52,17 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   if (
-    !customReq.files ||
-    !customReq.files.avatar ||
-    customReq.files.avatar.length === 0
+    !req.files ||
+    !req.files.avatar ||
+    req.files.avatar.length === 0
   ) {
     throw new ApiError(400, "Avatar File is required");
   }
 
   // console.log("\n req.files: ", req.files);
 
-  const avatarLocalPath = customReq?.files?.avatar[0].path;
-  const coverImageLocalPath = customReq.files?.coverImage?.[0]?.path ?? null;
+  const avatarLocalPath = req?.files?.avatar[0].path;
+  const coverImageLocalPath = req.files?.coverImage?.[0]?.path ?? null;
 
   if (!avatarLocalPath) throw new ApiError(400, "Avatar File is required");
 
@@ -96,7 +95,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-const loginUser = asyncHandler(async (req: Request, res: Response) => {
+const loginUser = asyncHandler(async (req: CustomRequest, res: Response) => {
   const { username, email, password } = req.body;
 
   if (!(username || email))
@@ -134,14 +133,14 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
-const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+const logoutUser = asyncHandler(async (req: CustomRequest, res: Response) => {
   const customReq = req as CustomRequest;
 
   await User.findByIdAndUpdate(
     customReq.user?._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
@@ -156,7 +155,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, {}, "User Logged out successfully"));
 });
 
-const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: Response) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
@@ -193,11 +192,10 @@ const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const changeCurrentPassword = asyncHandler(
-  async (req: Request, res: Response) => {
-    const customreq = req as CustomRequest;
+  async (req: CustomRequest, res: Response) => {
 
     const { oldPassword, NewPassword } = req.body;
-    const user = await User.findById(customreq.user?._id);
+    const user = await User.findById(req.user?._id);
 
     if (!user) throw new ApiError(400, "user not found");
 
@@ -214,19 +212,17 @@ const changeCurrentPassword = asyncHandler(
   }
 );
 
-const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
-  const customreq = req as CustomRequest;
+const getCurrentUser = asyncHandler(async (req: CustomRequest, res: Response) => {
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, customreq.user, "current user fetched successfully")
+      new ApiResponse(200, req.user, "current user fetched successfully")
     );
 });
 
 const updateAccountDetails = asyncHandler(
-  async (req: Request, res: Response) => {
-    const customreq = req as CustomRequest;
+  async (req: CustomRequest, res: Response) => {
 
     const { fullName, email } = req.body;
 
@@ -234,7 +230,7 @@ const updateAccountDetails = asyncHandler(
       throw new ApiError(400, "All fields are required");
 
     const user = await User.findByIdAndUpdate(
-      customreq.user?._id,
+      req.user?._id,
       {
         $set: {
           fullName,
@@ -250,10 +246,9 @@ const updateAccountDetails = asyncHandler(
   }
 );
 
-const updateUserAvatar = asyncHandler(async (req: Request, res: Response) => {
-  const customreq = req as CustomRequest;
+const updateUserAvatar = asyncHandler(async (req: CustomRequest, res: Response) => {
 
-  const avatarLocalPath = customreq.file?.path;
+  const avatarLocalPath = req.file?.path;
 
   if (!avatarLocalPath) throw new ApiError(400, "Avatar file is missing");
 
@@ -262,7 +257,7 @@ const updateUserAvatar = asyncHandler(async (req: Request, res: Response) => {
   if (!avatar?.url) throw new ApiError(400, "Error while uploading avatar");
 
   const user = await User.findByIdAndUpdate(
-    customreq.user?._id,
+    req.user?._id,
     {
       $set: {
         avatar: avatar.url,
@@ -277,10 +272,9 @@ const updateUserAvatar = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const updateUserCoverImage = asyncHandler(
-  async (req: Request, res: Response) => {
-    const customreq = req as CustomRequest;
+  async (req: CustomRequest, res: Response) => {
 
-    const userImglocalPath = customreq.file?.path;
+    const userImglocalPath = req.file?.path;
 
     if (!userImglocalPath) throw new ApiError(400, "Avatar file is missing");
 
@@ -290,7 +284,7 @@ const updateUserCoverImage = asyncHandler(
       throw new ApiError(400, "Error while uploading avatar");
 
     const user = await User.findByIdAndUpdate(
-      customreq.user?._id,
+      req.user?._id,
       {
         $set: {
           coverImage: coverImage.url,
@@ -306,8 +300,7 @@ const updateUserCoverImage = asyncHandler(
 );
 
 const getUserChannelProfile = asyncHandler(
-  async (req: Request, res: Response) => {
-    const customreq = req as CustomRequest;
+  async (req: CustomRequest, res: Response) => {
 
     const { username } = req.params;
 
@@ -345,7 +338,7 @@ const getUserChannelProfile = asyncHandler(
           },
           isSubscribed: {
             $cond: {
-              if: { $in: [customreq.user?._id, "$subscribers.subscriber"] },
+              if: { $in: [req.user?._id, "$subscribers.subscriber"] },
               then: true,
               else: false,
             },
@@ -375,7 +368,7 @@ const getUserChannelProfile = asyncHandler(
   }
 );
 
-const getWatchHistory = asyncHandler(async (req: Request, res: Response) => {
+const getWatchHistory = asyncHandler(async (req: CustomRequest, res: Response) => {
 
   const customReq = req as CustomRequest
 

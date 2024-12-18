@@ -3,9 +3,9 @@ import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import { Response } from "express";
+import {  Request,Response } from "express";
 import mongoose, {Types } from "mongoose";
-import { CustomRequest, jwtTokendcd } from "../types/types.js";
+import {  jwtTokendcd } from "../types/types.js";
 import jwt from "jsonwebtoken";
 
 const options = {
@@ -34,7 +34,7 @@ const generateTokens = async (userId: Types.ObjectId) => {
   }
 };
 
-const registerUser = asyncHandler(async (req: CustomRequest, res: Response) => {
+const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { fullName, email, username, password } = req.body;
 
   if (
@@ -95,7 +95,7 @@ const registerUser = asyncHandler(async (req: CustomRequest, res: Response) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-const loginUser = asyncHandler(async (req: CustomRequest, res: Response) => {
+const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
   if (!(username || email))
@@ -133,11 +133,11 @@ const loginUser = asyncHandler(async (req: CustomRequest, res: Response) => {
     );
 });
 
-const logoutUser = asyncHandler(async (req: CustomRequest, res: Response) => {
-  const customReq = req as CustomRequest;
+const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+  // const req = req as Request;
 
   await User.findByIdAndUpdate(
-    customReq.user?._id,
+    req.user?._id,
     {
       $unset: {
         refreshToken: 1,
@@ -155,7 +155,7 @@ const logoutUser = asyncHandler(async (req: CustomRequest, res: Response) => {
     .json(new ApiResponse(200, {}, "User Logged out successfully"));
 });
 
-const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: Response) => {
+const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
@@ -192,7 +192,7 @@ const refreshAccessToken = asyncHandler(async (req: CustomRequest, res: Response
 });
 
 const changeCurrentPassword = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
 
     const { oldPassword, NewPassword } = req.body;
     const user = await User.findById(req.user?._id);
@@ -212,7 +212,7 @@ const changeCurrentPassword = asyncHandler(
   }
 );
 
-const getCurrentUser = asyncHandler(async (req: CustomRequest, res: Response) => {
+const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
 
   return res
     .status(200)
@@ -222,7 +222,7 @@ const getCurrentUser = asyncHandler(async (req: CustomRequest, res: Response) =>
 });
 
 const updateAccountDetails = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
 
     const { fullName, email } = req.body;
 
@@ -246,7 +246,7 @@ const updateAccountDetails = asyncHandler(
   }
 );
 
-const updateUserAvatar = asyncHandler(async (req: CustomRequest, res: Response) => {
+const updateUserAvatar = asyncHandler(async (req: Request, res: Response) => {
 
   const avatarLocalPath = req.file?.path;
 
@@ -272,7 +272,7 @@ const updateUserAvatar = asyncHandler(async (req: CustomRequest, res: Response) 
 });
 
 const updateUserCoverImage = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
 
     const userImglocalPath = req.file?.path;
 
@@ -300,7 +300,7 @@ const updateUserCoverImage = asyncHandler(
 );
 
 const getUserChannelProfile = asyncHandler(
-  async (req: CustomRequest, res: Response) => {
+  async (req: Request, res: Response) => {
 
     const { username } = req.params;
 
@@ -368,14 +368,12 @@ const getUserChannelProfile = asyncHandler(
   }
 );
 
-const getWatchHistory = asyncHandler(async (req: CustomRequest, res: Response) => {
-
-  const customReq = req as CustomRequest
+const getWatchHistory = asyncHandler(async (req: Request, res: Response) => {
 
   const user = await User.aggregate([
     {
       $match: {
-        _id: new mongoose.Types.ObjectId(customReq.user?._id)
+        _id: new mongoose.Types.ObjectId(req.user?._id)
       }
     },
     {

@@ -4,17 +4,29 @@ import { videoSchema } from "@/models/video.model.js";
 import { Request } from "express";
 import { InferSchemaType, Types } from "mongoose";
 
+declare global {
+  namespace Express {
+    interface Request {
+      files?: {
+        avatar?: Express.Multer.File[];
+        coverImage?: Express.Multer.File[];
+      };
+      user?: IUser;
+    };
+  }
+}
+
 export type jwtTokendcd = {
   _id: string;
 };
 
-export interface CustomRequest extends Request {
-  files?: {
-    avatar?: Express.Multer.File[];
-    coverImage?: Express.Multer.File[];
-  };
-  user?: IUser;
-}
+// export interface CustomRequest extends Request {
+//   files?: {
+//     avatar?: Express.Multer.File[];
+//     coverImage?: Express.Multer.File[];
+//   };
+//   user?: IUser;
+// }
 
 export type IUser = InferSchemaType<typeof userSchema> & {
   _id: Types.ObjectId;

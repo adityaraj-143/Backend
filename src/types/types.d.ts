@@ -10,6 +10,8 @@ declare global {
       files?: {
         avatar?: Express.Multer.File[];
         coverImage?: Express.Multer.File[];
+        videofile?: Express.Multer.File[];
+        thumbnail?: Express.Multer.File[]; 
       };
       user?: IUser;
     };

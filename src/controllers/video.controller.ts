@@ -9,6 +9,10 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
+
+  
+
+
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -44,8 +48,8 @@ const publishAVideo = asyncHandler(async (req, res) => {
     title,
     description,
     duration: videofile.duration,
-    owner: req.user?._id
-  })
+    owner: req.user?._id,
+  });
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
@@ -119,10 +123,30 @@ const updateVideoThumbnail = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: delete video
+
+  const video = await Video.findByIdAndDelete(videoId);
+
+  if (!video) throw new ApiError(404, "Video not found");
+
+  res.status(200).json(new ApiResponse(200, "Video deleted successfully"));
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+
+  const video = Video.findByIdAndUpdate(
+    videoId,
+    {
+      $bit: {
+        isPublished: { xor: 1 },
+      },
+    },
+    { new: true }
+  );
+
+  if (!video) throw new ApiError(404, "Video not found");
+
+  res.status(200).json(new ApiResponse(200, video, "Toggled publish Status"));
 });
 
 export {

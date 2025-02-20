@@ -7,12 +7,25 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+  const { userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
 
-  
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
 
+  const skip = (page - 1) * limit;
+  const sortType =
+    req.query.sortType === "1" ? 1 : req.query.sortType === "-1" ? -1 : 1;
+  const sortBy = req.query.sortBy?.toString() || "createdAt";
 
+  let video = await Video.find({ _id: userId })
+    .sort({ [sortBy]: sortType })
+    .skip(skip)
+    .limit(limit);
+
+  if (!video) throw new ApiError(404, "Videos not found");
+
+  res.status(200).json(new ApiResponse(200, video, "Video found successfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -50,6 +63,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
     duration: videofile.duration,
     owner: req.user?._id,
   });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, video, "video created succesfully"));
 });
 
 const getVideoById = asyncHandler(async (req, res) => {

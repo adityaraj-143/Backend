@@ -22,14 +22,6 @@ export type jwtTokendcd = {
   _id: string;
 };
 
-// export interface CustomRequest extends Request {
-//   files?: {
-//     avatar?: Express.Multer.File[];
-//     coverImage?: Express.Multer.File[];
-//   };
-//   user?: IUser;
-// }
-
 export type IUser = InferSchemaType<typeof userSchema> & {
   _id: Types.ObjectId;
   isPasswordCorrect: (password: string) => Promise<Boolean>;

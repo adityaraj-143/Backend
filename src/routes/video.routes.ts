@@ -19,7 +19,6 @@ router
   .get(getAllVideos)
   .post(
     upload.fields([
-      //need to change the type for Request!!!!!
       {
         name: "videoFile",
         maxCount: 1,

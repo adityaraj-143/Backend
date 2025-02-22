@@ -7,7 +7,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const { userId } = req.query;
-  //TODO: get all videos based on query, sort, pagination
+  
+  if(!isValidObjectId(userId)) throw new ApiError(401, "Invalid user id");
 
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
@@ -17,14 +18,14 @@ const getAllVideos = asyncHandler(async (req, res) => {
     req.query.sortType === "1" ? 1 : req.query.sortType === "-1" ? -1 : 1;
   const sortBy = req.query.sortBy?.toString() || "createdAt";
 
-  let video = await Video.find({ _id: userId })
+  let videos = await Video.find({ _id: userId })
     .sort({ [sortBy]: sortType })
     .skip(skip)
     .limit(limit);
 
-  if (!video) throw new ApiError(404, "Videos not found");
+  if (!videos) throw new ApiError(404, "Videos not found");
 
-  res.status(200).json(new ApiResponse(200, video, "Video found successfully"));
+  res.status(200).json(new ApiResponse(200, videos, "Video found successfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -70,7 +71,6 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  //TODO: get video by id
 
   if (!videoId) throw new ApiError(404, "Video Id not found");
 
@@ -85,6 +85,8 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+
+  if(!isValidObjectId(videoId)) throw new ApiError(401, "Invalid video id");
 
   const { title, description } = req.body;
 
@@ -138,7 +140,8 @@ const updateVideoThumbnail = asyncHandler(async (req, res) => {
 
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  //TODO: delete video
+
+  if(!isValidObjectId(videoId)) throw new ApiError(401, "Invalid video id");
 
   const video = await Video.findByIdAndDelete(videoId);
 
@@ -149,6 +152,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
+
+  if(!isValidObjectId(videoId)) throw new ApiError(401, "Invalid video id");
 
   const video = Video.findByIdAndUpdate(
     videoId,

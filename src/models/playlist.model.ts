@@ -1,3 +1,4 @@
+import { IPlaylist } from "@/types/types.js";
 import mongoose, { Schema, Types } from "mongoose";
 
 export const playlistSchema = new Schema(
@@ -24,4 +25,4 @@ export const playlistSchema = new Schema(
   { timestamps: true }
 );
 
-export const Playlist = mongoose.model("Playlist", playlistSchema);
+export const Playlist = mongoose.model<IPlaylist>("Playlist", playlistSchema);

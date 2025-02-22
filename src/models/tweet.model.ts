@@ -1,3 +1,4 @@
+import { ITweet } from "@/types/types.js";
 import mongoose, { Schema, Types } from "mongoose";
 
 export const tweetSchema = new Schema(
@@ -14,4 +15,4 @@ export const tweetSchema = new Schema(
   { timestamps: true }
 );
 
-export const Tweet = mongoose.model("Tweet", tweetSchema);
+export const Tweet = mongoose.model<ITweet>("Tweet", tweetSchema);

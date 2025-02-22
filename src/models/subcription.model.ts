@@ -1,3 +1,4 @@
+import { ISubscriber } from "@/types/types.js";
 import mongoose, { Schema } from "mongoose";
 
 export const subscriptionSchema = new Schema(
@@ -16,4 +17,4 @@ export const subscriptionSchema = new Schema(
   }
 );
 
-export const Subscription = mongoose.model("Subscription", subscriptionSchema);
+export const Subscription = mongoose.model<ISubscriber>("Subscription", subscriptionSchema);

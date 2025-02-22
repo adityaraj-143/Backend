@@ -1,3 +1,4 @@
+import { ILike } from "@/types/types.js";
 import mongoose, { Schema, Types} from "mongoose";
 
 export const likeSchema = new Schema({
@@ -19,4 +20,4 @@ export const likeSchema = new Schema({
     },
 }, {timestamps: true})
 
-export const Like = mongoose.model("Like", likeSchema)
+export const Like = mongoose.model<ILike>("Like", likeSchema)

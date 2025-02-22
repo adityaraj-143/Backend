@@ -5,7 +5,6 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-
 const createTweet = asyncHandler(async (req, res) => {
   const { content } = req.body;
   const userId = req.user?._id;
@@ -30,13 +29,9 @@ const getUserTweets = asyncHandler(async (req, res) => {
   const { userId } = req.query;
 
   if (!userId) throw new ApiError(401, "User Id is required to fetch tweets");
-  if(!isValidObjectId(userId)) throw new ApiError(401, "Invalid user id");
+  if (!isValidObjectId(userId)) throw new ApiError(401, "Invalid user id");
 
-  const tweets = await Tweet.aggregate([
-    {
-      $match: { owner: userId },
-    },
-  ]);
+  const tweets = await Tweet.find({ owner: userId });
 
   res
     .status(200)
@@ -45,9 +40,9 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 const updateTweet = asyncHandler(async (req, res) => {
   const { content } = req.body;
-  const {tweetId} = req.query;
+  const { tweetId } = req.params;
 
-  if(!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweet id");
+  if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweet id");
 
   if (!content) throw new ApiError(400, "Content is required");
 
@@ -61,15 +56,13 @@ const updateTweet = asyncHandler(async (req, res) => {
 });
 
 const deleteTweet = asyncHandler(async (req, res) => {
+  const { tweetId } = req.params;
 
-  const {tweetId} = req.query;
+  if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweet id");
 
-  if(!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweet id");
+  await Tweet.findByIdAndDelete({ tweetId });
 
-  await Tweet.findByIdAndDelete({tweetId});
-
-  res.status(200).json(new ApiResponse(200, "Tweet deleted succefully"))
-
+  res.status(200).json(new ApiResponse(200, "Tweet deleted succefully"));
 });
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };

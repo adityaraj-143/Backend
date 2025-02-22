@@ -1,3 +1,4 @@
+import { IComment } from "@/types/types.js";
 import mongoose, {Schema, Types} from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
@@ -18,4 +19,4 @@ export const commentSchema = new Schema({
 
 commentSchema.plugin(mongooseAggregatePaginate)
 
-export const Comment = mongoose.model("Comment", commentSchema)
+export const Comment = mongoose.model<IComment>("Comment", commentSchema)

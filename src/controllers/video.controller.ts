@@ -25,7 +25,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
   if (!videos) throw new ApiError(404, "Videos not found");
 
-  res.status(200).json(new ApiResponse(200, videos, "Video found successfully"));
+  return res.status(200).json(new ApiResponse(200, videos, "Video found successfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -64,7 +64,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     owner: req.user?._id,
   });
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, video, "video created succesfully"));
 });
@@ -78,7 +78,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   if (!video) throw new ApiError(404, "Video not found");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, video.videofile, "Video fetched successfully"));
 });
@@ -104,7 +104,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, video, "video details updated successfully"));
 });
@@ -133,7 +133,7 @@ const updateVideoThumbnail = asyncHandler(async (req, res) => {
     }
   );
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, video, "thumbnail changed successfully"));
 });
@@ -147,7 +147,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
   if (!video) throw new ApiError(404, "Video not found");
 
-  res.status(200).json(new ApiResponse(200, "Video deleted successfully"));
+  return res.status(200).json(new ApiResponse(200, "Video deleted successfully"));
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
@@ -167,7 +167,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
   if (!video) throw new ApiError(404, "Video not found");
 
-  res.status(200).json(new ApiResponse(200, video, "Toggled publish Status"));
+  return res.status(200).json(new ApiResponse(200, video, "Toggled publish Status"));
 });
 
 export {

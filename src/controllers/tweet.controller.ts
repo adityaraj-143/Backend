@@ -20,7 +20,7 @@ const createTweet = asyncHandler(async (req, res) => {
 
   if (!tweet) throw new ApiError(401, "Couldn't create tweet");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, tweet, "Tweet created successfully"));
 });
@@ -33,7 +33,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
   const tweets = await Tweet.find({ owner: userId });
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, tweets, "Tweets fetched succefully"));
 });
@@ -50,7 +50,7 @@ const updateTweet = asyncHandler(async (req, res) => {
 
   if (!tweet) throw new ApiError(500, "Couldn't update tweet");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, tweet, "Tweet updated successfully"));
 });
@@ -62,7 +62,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
   await Tweet.findByIdAndDelete({ tweetId });
 
-  res.status(200).json(new ApiResponse(200, "Tweet deleted succefully"));
+  return res.status(200).json(new ApiResponse(200, "Tweet deleted succefully"));
 });
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };

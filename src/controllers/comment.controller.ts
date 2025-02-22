@@ -18,7 +18,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
   if (!comments) throw new ApiError(404, "Comments not found");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, comments, "Comments found successfully"));
 });
@@ -36,7 +36,7 @@ const addComment = asyncHandler(async (req, res) => {
 
   if (!comment) throw new ApiError(401, "Couldn't create comment");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, comment, "Comment created successfully"));
 });
@@ -58,7 +58,7 @@ const updateComment = asyncHandler(async (req, res) => {
 
   if (!comment) throw new ApiError(401, "Couldn't update comment");
 
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, comment, "Comment updated succesfully"));
 });
@@ -70,7 +70,9 @@ const deleteComment = asyncHandler(async (req, res) => {
 
   await Comment.findByIdAndDelete(commentId);
 
-  res.status(200).json(new ApiResponse(200, "Comment deleted succefully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Comment deleted succefully"));
 });
 
 export { getVideoComments, addComment, updateComment, deleteComment };

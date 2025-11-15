@@ -46,7 +46,7 @@ const updateTweet = asyncHandler(async (req, res) => {
 
   if (!content) throw new ApiError(400, "Content is required");
 
-  const tweet = await Tweet.findByIdAndUpdate({ tweetId }, { content });
+  const tweet = await Tweet.findByIdAndUpdate(tweetId , { content });
 
   if (!tweet) throw new ApiError(500, "Couldn't update tweet");
 
